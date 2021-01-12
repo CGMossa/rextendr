@@ -145,19 +145,23 @@ rust_source <- function(file, code = NULL, dependencies = NULL,
   }
 
 
+  # load shared library
+  libfilename <- if (.Platform$OS.type == "windows") {
+    libname
+    # paste0(libname, get_dynlib_ext())
+  } else {
+    paste0("lib", libname)
+    # paste0("lib", libname, get_dynlib_ext())
+  }
+
   # generate R bindings for shared library
   r_path <- file.path(dir, "target", "extendr_wrappers.R")
   r_raw_lines <- brio::read_lines(r_path)
-  r_raw_lines <- gsub(".Call\\((.*)\\)", sprintf(".Call(\\1, PACKAGE = \"%s\")", libname), r_raw_lines)
+  r_raw_lines <- gsub(".Call\\((.*)\\)", sprintf(".Call(\\1, PACKAGE = \"%s\")", libfilename), r_raw_lines)
   brio::write_lines(r_raw_lines, r_path)
   source(r_path, local = env)
 
-  # load shared library
-  libfilename <- if (.Platform$OS.type == "windows") {
-    paste0(libname, get_dynlib_ext())
-  } else {
-    paste0("lib", libname, get_dynlib_ext())
-  }
+  libfilename <- paste0(libfilename, get_dynlib_ext())
 
   target_folder <- ifelse(
     is.null(specific_target),
