@@ -64,8 +64,8 @@ jobs:
           rustup default
           rustup toolchain list
           rustup target list --installed
-          $env:PATH.Split(";")
-          
+          $env:PATH -split [System.IO.Path]::PathSeparator
+
       - name: Run tests
         run : |
           install.packages("remotes")
