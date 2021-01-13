@@ -62,9 +62,9 @@ jobs:
           install.packages("remotes")
           remotes::install_local(force = TRUE)
           library(rextendr)
-          rust_function("fn rust_inc(x : f64) -> f64 { x + 10f64}")
-          rust_inc(42)
-          rust_function("fn rust_inc(x : f64) -> f64 { x + 100f64}")
+          rust_function("fn rust_inc(x : f64) -> f64 { x + 10f64}") -> dll_info
           rust_inc(42)
           print(rust_inc)
+          print(dll_info)
+          print(dir(dirname(dll_info[["path"]]), recursive = TRUE))
         shell: Rscript {0}
