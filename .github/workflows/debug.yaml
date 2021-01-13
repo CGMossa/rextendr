@@ -53,18 +53,19 @@ jobs:
         env: 
           RUST_VERSION: ${{ matrix.config.rust-version }}
 
-      - name: Check default Rust
-        run: |
-          rustup default
-          rustup toolchain list
-          rustup target list --installed
-          $env:PATH.Split(";")
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v1
         with:
           r-version: ${{ matrix.config.r }}
 
+      - name: Check environment
+        run: |
+          rustup default
+          rustup toolchain list
+          rustup target list --installed
+          $env:PATH.Split(";")
+          
       - name: Run tests
         run : |
           install.packages("remotes")
