@@ -61,6 +61,13 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
+      - name: Check environment
+        run: |
+          rustup default
+          rustup toolchain list
+          rustup target list --installed
+          $env:PATH -split [System.IO.Path]::PathSeparator
+
       - name: Run tests
         run : |
           install.packages("remotes")
