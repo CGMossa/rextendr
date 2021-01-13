@@ -40,7 +40,6 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.config.rust-version }}
-          default: true
           components: rustfmt, clippy
       
       - name: Set up R
