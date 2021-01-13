@@ -40,6 +40,8 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.config.rust-version }}
+          default: true
+          override: true
           components: rustfmt, clippy
       
       - name: Set up R
@@ -55,6 +57,12 @@ jobs:
         run: |
             rustup target add i686-pc-windows-gnu
             rustup target add x86_64-pc-windows-gnu
+
+      - name: Check default Rust
+        run: |
+          rustup default
+          rustup toolchain list
+          rustup target list --installed
 
       - name: Run tests
         run : |
