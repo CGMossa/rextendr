@@ -42,7 +42,7 @@ jobs:
           toolchain: ${{ matrix.config.rust-version }}
           default: true
           override: false
-          components: rustfmt, clippy
+          components: rustfmt, clippy, rust-std
           target: |
             x86_64-pc-windows-gnu
             i686-pc-windows-gnu
