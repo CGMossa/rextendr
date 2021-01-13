@@ -43,7 +43,9 @@ jobs:
           default: true
           override: false
           components: rustfmt, clippy
-          target: x86_64-pc-windows-gnu, i686-pc-windows-gnu
+          target: |
+            x86_64-pc-windows-gnu
+            i686-pc-windows-gnu
       
       - name: Configure Windows
         if: startsWith(runner.os, 'Windows')
