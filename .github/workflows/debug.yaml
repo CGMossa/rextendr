@@ -44,25 +44,25 @@ jobs:
           override: true
           components: rustfmt, clippy
       
-      - name: Set up R
-        uses: r-lib/actions/setup-r@v1
-        with:
-          r-version: ${{ matrix.config.r }}
-      
-      # - name: Set up Pandoc
-      #   uses: r-lib/actions/setup-pandoc@v1
-      
       - name: Configure Windows
         if: startsWith(runner.os, 'Windows')
         run: |
-            rustup target add i686-pc-windows-gnu
-            rustup target add x86_64-pc-windows-gnu
+            rustup default $env:RUST_VERSION
+            rustup target add i686-pc-windows-gnu --toolchain $env:RUST_VERSION
+            rustup target add x86_64-pc-windows-gnu --toolchain $env:RUST_VERSION
+        with: 
+          RUST_VERSION: ${{ matrix.config.rust-version }}
 
       - name: Check default Rust
         run: |
           rustup default
           rustup toolchain list
           rustup target list --installed
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: ${{ matrix.config.r }}
 
       - name: Run tests
         run : |
