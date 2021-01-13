@@ -58,6 +58,7 @@ jobs:
           rustup default
           rustup toolchain list
           rustup target list --installed
+          $env:PATH.Split(";")
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v1
