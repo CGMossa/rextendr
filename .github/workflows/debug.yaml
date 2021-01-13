@@ -69,7 +69,7 @@ jobs:
           install.packages("remotes")
           remotes::install_local(force = TRUE)
           library(rextendr)
-          rust_function("fn rust_inc(x : f64) -> f64 { x + 10f64}") -> dll_info
+          rust_function("fn rust_inc(x : f64) -> f64 { x + 10f64}", toolchain = "stable-gnu") -> dll_info
           rust_inc(42)
           print(rust_inc)
           print(dll_info)
