@@ -1,0 +1,70 @@
+name: Debug
+
+on:
+  push:
+    branches:
+      - dll-name
+  workflow_dispatch:
+
+jobs:
+  # All tests under this job are run with pre-computed libR-sys bindings.
+  tests_no_bindgen:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (R-${{ matrix.config.r }} rust-${{ matrix.config.rust-version }})
+            
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          # - {os: windows-latest, r: 'release', rust-version: 'stable-msvc'}
+
+          # - {os: macOS-latest,   r: 'release', rust-version: 'stable'}
+
+          - {os: ubuntu-20.04,   r: 'release', rust-version: 'stable', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+
+
+
+    env:
+      RSPM: ${{ matrix.config.rspm }}
+    
+    # PowerShell core is available on all platforms and can be used to unify scripts
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.config.rust-version }}
+          default: true
+          components: rustfmt, clippy
+      
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: ${{ matrix.config.r }}
+      
+      # - name: Set up Pandoc
+      #   uses: r-lib/actions/setup-pandoc@v1
+      
+      - name: Configure Windows
+        if: startsWith(runner.os, 'Windows')
+        run: |
+            rustup target add i686-pc-windows-gnu
+            rustup target add x86_64-pc-windows-gnu
+
+      - name: Run tests
+        run : |
+          install.packages("remotes")
+          remotes::install_local(force = TRUE)
+          library(rextendr)
+          rust_function("fn rust_inc(x : f64) -> f64 { x + 10f64}")
+          rust_inc(42)
+          rust_function("fn rust_inc(x : f64) -> f64 { x + 100f64}")
+          rust_inc(42)
+          print(rust_inc)
+        shell: Rscript {0}
