@@ -1,3 +1,12 @@
+#' @title Only rust code
+#'
+#' @param lines Character vector consisting of rust code.
+#'
+#' @return Returns rust code, without empty lines, single-line comments, or
+#' block comments.
+#'
+#' @rdname clean_rust_code
+#' @noRd
 clean_rust_code <- function(lines) {
   lines %>%
     remove_empty_or_whitespace() %>%
@@ -6,22 +15,28 @@ clean_rust_code <- function(lines) {
     remove_empty_or_whitespace()
 }
 
+#' @rdname clean_rust_code
+#' @note Only used in [clean_rust_code]
 remove_empty_or_whitespace <- function(lns) {
   stringi::stri_subset_regex(lns, "^\\s*$", negate = TRUE)
 }
 
+#' @rdname clean_rust_code
+#' @note Only used in [clean_rust_code]
 remove_line_comments <- function(lns) {
   stringi::stri_replace_first_regex(lns, "//.*$", "")
 }
 
-# Because R does not allow strightforward iteration over
-# scalar strings, determining `/*` and `*/` positions can be challenging.
-# E.g., regex matches 3 `/*` and 3 `*/` in `/*/**/*/`.
-# 1. We find all occurence of `/*` and `*/`.
-# 2. We find non-overlapping `/*` and `*/`.
-# 3. We build pairs of open-close comment delimiters by collapsing nested
-#   comments.
-# 4. We fill in space between remaining delimiters with spaces (simplest way).
+#' @note
+#' Because R does not allow strightforward iteration over
+#' scalar strings, determining `/*` and `*/` positions can be challenging.
+#' E.g., regex matches 3 `/*` and 3 `*/` in `/*/**/*/`.
+#' 1. We find all occurence of `/*` and `*/`.
+#' 2. We find non-overlapping `/*` and `*/`.
+#' 3. We build pairs of open-close comment delimiters by collapsing nested
+#'   comments.
+#' 4. We fill in space between remaining delimiters with spaces (simplest way).
+#' @noRd
 fill_block_comments <- function(lns, fill_with = " ") {
   lns <- glue_collapse(lns, sep = "\n")
 
@@ -129,7 +144,7 @@ fill_block_comments <- function(lns, fill_with = " ") {
     end_close = dplyr::filter(to_replace, .data$type == "close")[["end"]],
   )
 
-  # Replaces each continuous commnet block with whitespaces
+  # Replaces each continuous comment block with whitespaces
   # of the same length -- this is needed to preserve line length
   # and previously computed positions, and it does not affect
   # parsing at later stages.
