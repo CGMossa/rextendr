@@ -1,3 +1,7 @@
+#' @description Find code annotated with `#[extendr]`.
+#' @note Only used in [make_module_macro].
+#' @rdname make_module_macro
+#' @noRd
 find_exports <- function(clean_lns) {
   ids <- find_extendr_attrs_ids(clean_lns)
   start <- ids
@@ -21,8 +25,12 @@ find_extendr_attrs_ids <- function(lns) {
   which(stringi::stri_detect_regex(lns, r"{#\s*\[\s*extendr(\s*\(.*\))?\s*\]}"))
 }
 
-# Gets function/module metadata from a subset of lines.
-# Finds first occurence of `fn` or `impl`.
+#' Gets function/module metadata from a subset of lines.
+#' Finds first occurence of `fn` or `impl`.
+#'
+#' @note Only used in [find_exports].
+#' @rdname make_module_macro
+#' @noRd
 extract_meta <- function(lns) {
 
   # Matches fn|impl<'a> item_name
@@ -53,4 +61,3 @@ extract_meta <- function(lns) {
   }
   result
 }
-

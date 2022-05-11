@@ -1,11 +1,9 @@
-#' @title Only rust code
-#'
+#' Rust code
 #' @param lines Character vector consisting of rust code.
 #'
 #' @return Returns rust code, without empty lines, single-line comments, or
 #' block comments.
 #'
-#' @rdname clean_rust_code
 #' @noRd
 clean_rust_code <- function(lines) {
   lines %>%
@@ -15,13 +13,11 @@ clean_rust_code <- function(lines) {
     remove_empty_or_whitespace()
 }
 
-#' @rdname clean_rust_code
 #' @note Only used in [clean_rust_code]
 remove_empty_or_whitespace <- function(lns) {
   stringi::stri_subset_regex(lns, "^\\s*$", negate = TRUE)
 }
 
-#' @rdname clean_rust_code
 #' @note Only used in [clean_rust_code]
 remove_line_comments <- function(lns) {
   stringi::stri_replace_first_regex(lns, "//.*$", "")

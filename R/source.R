@@ -418,6 +418,15 @@ check_cargo_output <- function(compilation_result, message_buffer, tty_has_color
   }
 }
 
+#' Generate `cargo` manifest.
+#'
+#' @param libname String representing name of the crate
+#' @param dependencies String that is a valid `toml` entry for `[dependencies]`.
+#' @param patch.crates_io List of dependencies that are overriden from [crates.io](https://crates.io) 
+#' See [The Cargo Book]
+#' @param features List consisting of features
+#' [The Cargo Book]: https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html#the-patch-section
+#' @noRd
 generate_cargo.toml <- function(libname = "rextendr",
                                 dependencies = NULL,
                                 patch.crates_io = NULL,
@@ -441,7 +450,10 @@ generate_cargo.toml <- function(libname = "rextendr",
   )
 }
 
-
+#' @return Character of the file extension used on this platform for dynamic
+#' libraries.
+#' 
+#' @noRd
 get_dynlib_ext <- function() {
   # .Platform$dynlib.ext is not reliable on OS X, so need to work around it
   sysinf <- Sys.info()
@@ -454,6 +466,9 @@ get_dynlib_ext <- function() {
   .Platform$dynlib.ext
 }
 
+#' @return Character representing the name of the dynamic library generated.
+#' On non-Windows platforms these are prefixed with `lib`.
+#' @noRd 
 get_dynlib_name <- function(libname) {
   libfilename <- if (.Platform$OS.type == "windows") {
     libname
@@ -462,6 +477,9 @@ get_dynlib_name <- function(libname) {
   }
 }
 
+#' @return Character representing `rustc` target suitable for this R instance.
+#' 
+#' @noRd 
 get_specific_target_name <- function() {
   sysinf <- Sys.info()
 
@@ -480,10 +498,18 @@ get_specific_target_name <- function() {
   return(NULL)
 }
 
+#' @description Keeps track of whether build directories have been created, and
+#' how many invocation to [rust_source] has occurred.
+#'
+#' @note This is used in `source.R` and `eval.R`.
+#' @noRd
 the <- new.env(parent = emptyenv())
 the$build_dir <- NULL
 the$count <- 1L
 
+#' @param cache_build Logical, determining if to use the same package for many
+#' [rust_source] calls, or not.
+#' @noRd
 get_build_dir <- function(cache_build) {
   if (!isTRUE(cache_build)) {
     clean_build_dir()
@@ -499,6 +525,10 @@ get_build_dir <- function(cache_build) {
   the$build_dir
 }
 
+#' @description Clear the current rust package that is used for on-the-fly
+#' evaluations.
+#' 
+#' @noRd
 clean_build_dir <- function() {
   if (!is.null(the$build_dir)) {
     unlink(the$build_dir, recursive = TRUE)
